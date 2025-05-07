@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <h2>Iniciar Sesión</h2>
+      <h2><u>Iniciar Sesión</u></h2>
       <input v-model="userId" type="text" placeholder="Ingrese su ID" />
       <button @click="login">Ingresar</button>
     </div>
@@ -37,17 +37,21 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(#f3f3f3 10%,#77d6ce) ;
+  min-height: 100vh; 
+  background: 
+    linear-gradient(135deg,#000000, #58c095, #000000),
+    url('https://www.transparenttextures.com/patterns/cartographer.png');
+  background-blend-mode: overlay;
+  color: white;
 }
 
 .login-box {
-  background: linear-gradient(#f3f3f3 10%,#77d6ce) ;
   padding: 50px;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
+  border: 2px solid #000000; 
 }
 
 h2 {
@@ -69,13 +73,16 @@ input {
 button {
   width: 50%;
   padding: 10px;
-  background: linear-gradient(#f3f3f3 5%,#77d6ce) ;
-  color: black;
   font-size: 16px;
   border-radius: 4px;
-  border: 1px solid whitesmoke;
+  border: 2px solid black;
   cursor: pointer;
   align-items: center;
+  background: 
+    linear-gradient(135deg,#000000, #58c095, #000000),
+    url('https://www.transparenttextures.com/patterns/cartographer.png');
+  background-blend-mode: overlay;
+  color: rgb(0, 0, 0);
 }
 </style>
 
