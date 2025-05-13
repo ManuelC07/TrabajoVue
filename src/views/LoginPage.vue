@@ -1,5 +1,6 @@
 <template>
   <div class="login-container">
+    <img class="fondo" src="/img/icons/fondo4.png" alt="Fondo" />
     <div class="login-box">
       <h2><u>Iniciar Sesión</u></h2>
       <input v-model="userId" type="text" placeholder="Ingrese su ID" />
@@ -37,52 +38,61 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; 
-  background: 
-    linear-gradient(135deg,#000000, #58c095, #000000),
-    url('https://www.transparenttextures.com/patterns/cartographer.png');
-  background-blend-mode: overlay;
+  min-height: 100vh;
+  position: relative;
   color: white;
+}
+
+.fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
 }
 
 .login-box {
   padding: 50px;
   border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   width: 300px;
   text-align: center;
-  border: 2px solid #000000; 
+  border: 2px solid #ffffff;
 }
 
 h2 {
   margin-bottom: 20px;
   font-family: Arial, sans-serif;
   font-size: 20px;
-  color: #000000;
+  color: #ffffff;
 }
 
 input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
-  border: 1px;
+  border: none;
   border-radius: 4px;
   font-size: 16px;
 }
 
 button {
-  width: 50%;
+  width: 100%;
   padding: 10px;
   font-size: 16px;
   border-radius: 4px;
-  border: 2px solid black;
+  border: 2px solid white;
+  background-color: transparent; /* Botón transparente */
+  color: white;
   cursor: pointer;
-  align-items: center;
-  background: 
-    linear-gradient(135deg,#000000, #58c095, #000000),
-    url('https://www.transparenttextures.com/patterns/cartographer.png');
-  background-blend-mode: overlay;
-  color: rgb(0, 0, 0);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+  background-color: white;
+  color: black;
 }
 </style>
-

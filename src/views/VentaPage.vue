@@ -1,6 +1,7 @@
 <template>
+  <div class="background">
     <div class="sale-form">
-      <h2>Venta de Criptomoneda</h2>
+      <h2><u>Venta de Criptomoneda</u></h2>
       <form @submit.prevent="submitForm">
         <!-- Criptomoneda -->
         <div>
@@ -52,7 +53,8 @@
       <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
       <p v-if="successMessage" style="color: green;">{{ successMessage }}</p>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   import axios from 'axios';
@@ -164,14 +166,14 @@
     font-size: 16px;     /* texto más grande */
     border-radius: 12px; /* más redondeado */
     border: 2px solid black;
-    background-color: #4CAF50;
-    color: white;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
     cursor: pointer;
     transition: background-color 0.3s;
     margin-top: 28px;
   }
   button:hover {
-    background-color: #4CAF50;
+    background-color: #8b8b8b;
   }
   
   p {
@@ -220,4 +222,16 @@
     border-radius: 10px;
     border: 1px solid #ccc;
   }
+  
+.background {
+  min-height: 100vh; /* Mínimo alto de la pantalla */
+  display: flex;
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  background: 
+    linear-gradient(135deg,#000000, #e05a5a, #000000),
+    url('https://www.transparenttextures.com/patterns/light-wool.png');
+  background-blend-mode: overlay;
+  color: rgb(0, 0, 0);
+}
   </style>

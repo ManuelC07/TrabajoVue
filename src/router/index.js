@@ -8,7 +8,7 @@ import HistorialPage from "../views/HistorialPage.vue";
 
 const routes = [
   {
-    path: '/',
+    path: '/login',
     name: 'login',
     component: LoginPage // Ruta principal será el LoginPage
   },

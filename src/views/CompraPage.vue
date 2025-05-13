@@ -1,7 +1,8 @@
 <template>
+  <div class="background">
     <div class="purchase-form">
-    <h2>Compra De Criptomoneda</h2>
-    <form @submit.prevent="submitForm">
+     <h2><u>Compra De Criptomoneda</u></h2>
+     <form @submit.prevent="submitForm">
       <!-- Criptomoneda -->
       <div>
         <label for="crypto"><u>Criptomoneda</u></label>
@@ -47,10 +48,11 @@
         <button type="submit">Registrar compra</button>
         <button @click="$router.push('/about')">Volver</button>
       </div>
-    </form>
+     </form>
 
-    <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
-    <p v-if="successMessage" style="color: green;">{{ successMessage }}</p>
+     <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+     <p v-if="successMessage" style="color: green;">{{ successMessage }}</p>
+   </div>
   </div>
 </template>
 
@@ -164,14 +166,14 @@ button {
   font-size: 16px;     /* texto más grande */
   border-radius: 12px; /* más redondeado */
   border: 2px solid black;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #ffffff;
+  color: black;
   cursor: pointer;
   transition: background-color 0.3s;
   margin-top: 28px;
 }
 button:hover {
-  background-color: #4CAF50;
+  background-color: #8b8b8b;
 }
 
 p {
@@ -221,4 +223,15 @@ p {
   border: 1px solid #ccc;
 }
 
+.background {
+  min-height: 100vh; /* Mínimo alto de la pantalla */
+  display: flex;
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  background: 
+    linear-gradient(135deg,#000000, #58c095, #000000),
+    url('https://www.transparenttextures.com/patterns/light-wool.png');
+  background-blend-mode: overlay;
+  color: rgb(0, 0, 0);
+}
 </style>
