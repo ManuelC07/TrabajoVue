@@ -4,11 +4,13 @@ import AboutPage from "../views/AboutPage.vue"; // Importar la vista About
 import CompraPage from "../views/CompraPage.vue";
 import VentaPage from "../views/VentaPage.vue";
 import HistorialPage from "../views/HistorialPage.vue";
+import EstadoActualPage from "../views/EstadoActualPage.vue";
+import InversionPage from "../views/InversionPage.vue";
 
 
 const routes = [
   {
-    path: '/login',
+    path: '/',
     name: 'login',
     component: LoginPage // Ruta principal será el LoginPage
   },
@@ -29,6 +31,14 @@ const routes = [
   { path: '/historial', 
     name: 'historial', 
     component: HistorialPage
+  },
+  { path: '/finanzas', 
+    name: 'finanzas', 
+    component: EstadoActualPage
+  },
+  { path: '/inversion', 
+    name: 'inversion', 
+    component: InversionPage
   }
 ];
 

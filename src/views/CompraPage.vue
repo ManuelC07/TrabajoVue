@@ -7,13 +7,13 @@
       <div>
         <label for="crypto"><u>Criptomoneda</u></label>
          <div class="crypto-options">
-         <label class="crypto-option" :class="{ 'selected': cryptoCode === 'bitcoin' }">
-         <input type="radio" v-model="cryptoCode" name="crypto" value="bitcoin" required>
+         <label class="crypto-option" :class="{ 'selected': cryptoCode === 'btc' }">
+         <input type="radio" v-model="cryptoCode" name="crypto" value="btc" required>
          <img src="/img/icons/bitcoin2.png"/>
           Bitcoin
         </label>
-        <label class="crypto-option" :class="{ 'selected': cryptoCode === 'ethereum' }">
-          <input type="radio" v-model="cryptoCode" name="crypto" value="ethereum" required>
+        <label class="crypto-option" :class="{ 'selected': cryptoCode === 'eth' }">
+          <input type="radio" v-model="cryptoCode" name="crypto" value="eth" required>
           <img src="/img/icons/ethereum.png"/>
            Ethereum
         </label>
@@ -34,7 +34,7 @@
       <!-- Monto pagado -->
       <div class="amount-container">
         <label for="money"><u>Monto a Pagar</u></label>
-        <input type="number" v-model="money" min="0" required/>
+        <input type="number" v-model="money" min="0" required readonly />
       </div>
 
       <!-- Fecha y hora -->
@@ -57,49 +57,75 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapState } from "vuex";
+import axios from "axios";
 
 export default {
   data() {
     return {
-      cryptoCode: '',        // Código de la criptomoneda
-      cryptoAmount: '',      // Cantidad de criptomonedas compradas
-      money: '',             // Dinero gastado (en pesos)
-      datetime: '',          // Fecha y hora de la compra
-      UserId: '', // Esto lo deberías obtener del login
-      errorMessage: '',      // Mensaje de error
-      successMessage: '',    // Mensaje de éxito
+      cryptoCode: '',
+      cryptoAmount: '',
+      money: '',
+      datetime: '',
+      errorMessage: '',
+      successMessage: '',
     };
   },
+
+  computed: {
+    ...mapState(["userId"]), // 🔥 Esto conecta el estado global de Vuex
+  },
+
+  watch: {
+    cryptoCode() {
+      this.fetchCryptoPrice();
+    },
+    cryptoAmount() {
+      this.fetchCryptoPrice();
+    }
+  },
+
   methods: {
-    // Validar el formulario antes de enviarlo
+    async fetchCryptoPrice() {
+      if (!this.cryptoCode || !this.cryptoAmount || this.cryptoAmount <= 0) {
+        this.money = '';
+        return;
+      }
+
+      try {
+        const response = await axios.get(`https://criptoya.com/api/satoshitango/${this.cryptoCode}/ars`);
+        const precioUnitario = response.data.totalAsk;
+        this.money = (this.cryptoAmount * precioUnitario).toFixed(2);
+        this.errorMessage = '';
+      } catch (error) {
+        console.error('Error al obtener el precio de la criptomoneda:', error);
+        this.errorMessage = 'No se pudo obtener el precio actual. Intenta más tarde.';
+        this.money = '';
+      }
+    },
+
     validateForm() {
-      if (!this.cryptoCode || !this.cryptoAmount || !this.money || !this.datetime) {
-        return false;
-      }
+      if (!this.cryptoCode || !this.cryptoAmount || !this.money || !this.datetime) return false;
+      if (this.cryptoAmount <= 0 || this.money <= 0) return false;
 
-      // Validar que la cantidad de criptomonedas y el dinero sean mayores a 0
-      if (this.cryptoAmount <= 0 || this.money <= 0) {
-        return false;
-      }
-
-      // Validar que la fecha sea válida (no futura)
       const currentDate = new Date();
       const inputDate = new Date(this.datetime);
-      if (inputDate > currentDate) {
-        return false;
-      }
+      if (inputDate > currentDate) return false;
 
       return true;
     },
 
-    // Enviar los datos al servidor
     async submitForm() {
+      // 🔄 Limpiar mensajes anteriores
+      this.successMessage = '';
+      this.errorMessage = '';
+
       if (!this.validateForm()) {
         this.errorMessage = 'Por favor, revisa los datos ingresados.';
         return;
       }
 
+      // 🚨 Aquí sí va a tener el userId de Vuex
       const transaction = {
         user_id: this.userId,
         action: 'purchase',
@@ -112,27 +138,27 @@ export default {
       try {
         await axios.post('https://laboratorio3-f36a.restdb.io/rest/transactions', transaction, {
           headers: {
-            'x-apikey': 'tu_api_key', // Aquí va tu API Key
+            'x-apikey': '64bdbb6f86d8c5e18ded91e3',
           },
         });
 
         this.successMessage = 'Compra registrada con éxito';
-        this.errorMessage = '';  // Limpiar cualquier mensaje de error previo
-        this.resetForm();  // Opcional: limpiar el formulario después de éxito
+        this.errorMessage = '';
+        this.resetForm();
       } catch (error) {
+        console.error(error);
         this.errorMessage = 'Error al registrar la compra. Intenta de nuevo.';
-        this.successMessage = '';  // Limpiar cualquier mensaje de éxito previo
+        this.successMessage = '';
       }
     },
 
-    // Limpiar el formulario
     resetForm() {
       this.cryptoCode = '';
       this.cryptoAmount = '';
       this.money = '';
       this.datetime = '';
     },
-  },
+  }
 };
 </script>
 

@@ -4,7 +4,7 @@
     <header class="header">
       <div class="user-info">Usuario: {{ getUserId }}</div>
       <div class="title"><u>Bienvenido a CriptoApp</u></div>
-      <button class="salir-button" @click="$router.push('/login')">Salir</button>
+      <button class="salir-button" @click="$router.push('/')">Cerrar Sesion</button>
     </header>
 
     <!-- Botones verticales -->
@@ -12,6 +12,8 @@
       <button @click="$router.push('/comprar')">Comprar</button>
       <button @click="$router.push('/vender')">Vender</button>
       <button @click="$router.push('/historial')">Historial</button>
+      <button @click="$router.push('/finanzas')">Mis Finanzas</button>
+      <button @click="$router.push('/inversion')">Analisis Inversion</button>
     </div>
   </div>
 </template>
@@ -35,7 +37,7 @@ export default {
   align-items: center;
   padding: 50px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #000000, #60a5ddf3, #000000),
+  background: linear-gradient(135deg, #000000, #1fa099f3, #000000),
               url('https://www.transparenttextures.com/patterns/light-wool.png');
   background-blend-mode: overlay;
   color: white;
@@ -52,7 +54,7 @@ export default {
 }
 
 .title {
-  font-size: 24px;
+  font-size: 26px;
   text-align: center;
   flex-grow: 2;
 }

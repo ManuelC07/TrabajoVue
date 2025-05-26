@@ -7,13 +7,13 @@
         <div>
          <label for="crypto"><u>Criptomoneda</u></label>
            <div class="crypto-options">
-             <label class="crypto-option" :class="{ 'selected': cryptoCode === 'bitcoin' }">
-               <input type="radio" v-model="cryptoCode" name="crypto" value="bitcoin" required>
+             <label class="crypto-option" :class="{ 'selected': cryptoCode === 'btc' }">
+               <input type="radio" v-model="cryptoCode" name="crypto" value="btc" required>
                <img src="/img/icons/bitcoin2.png"/>
                Bitcoin
               </label>
-              <label class="crypto-option" :class="{ 'selected': cryptoCode === 'ethereum' }">
-                <input type="radio" v-model="cryptoCode" name="crypto" value="ethereum" required>
+              <label class="crypto-option" :class="{ 'selected': cryptoCode === 'eth' }">
+                <input type="radio" v-model="cryptoCode" name="crypto" value="eth" required>
                 <img src="/img/icons/ethereum.png"/>
                  Ethereum
               </label>
@@ -55,88 +55,107 @@
     </div>
   </div>
 </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        cryptoCode: '',        // Código de la criptomoneda
-        cryptoAmount: '',      // Cantidad de criptomonedas vendidas
-        money: '',             // Dinero recibido (en pesos)
-        datetime: '',          // Fecha y hora de la venta
-        userId: 'valor_introducido_login', // Este valor debe ser el que proviene del login
-        errorMessage: '',      // Mensaje de error
-        successMessage: '',    // Mensaje de éxito
-      };
+
+<script>
+ import axios from 'axios';
+
+ export default {
+  data() {
+    return {
+      cryptoCode: '',
+      cryptoAmount: '',
+      money: '',
+      datetime: '',
+      userId: 'valor_introducido_login',
+      errorMessage: '',
+      successMessage: '',
+    };
+  },
+
+  watch: {
+    cryptoCode() {
+      this.fetchCryptoPrice();
     },
-    methods: {
-      // Validar el formulario antes de enviarlo
-      validateForm() {
-        if (!this.cryptoCode || !this.cryptoAmount || !this.money || !this.datetime) {
-          return false;
-        }
-  
-        // Validar que la cantidad de criptomonedas y el dinero sean mayores a 0
-        if (this.cryptoAmount <= 0 || this.money <= 0) {
-          return false;
-        }
-  
-        // Validar que la fecha sea válida (no futura)
-        const currentDate = new Date();
-        const inputDate = new Date(this.datetime);
-        if (inputDate > currentDate) {
-          return false;
-        }
-  
-        return true;
-      },
-  
-      // Enviar los datos al servidor
-      async submitForm() {
-        if (!this.validateForm()) {
-          this.errorMessage = 'Por favor, revisa los datos ingresados.';
-          return;
-        }
-  
-        const transaction = {
-          user_id: this.userId,
-          action: 'sale', // Cambia a "sale" porque es una venta
-          crypto_code: this.cryptoCode,
-          crypto_amount: this.cryptoAmount,
-          money: this.money,
-          datetime: this.datetime,
-        };
-  
-        try {
-          await axios.post('https://laboratorio3-f36a.restdb.io/rest/transactions', transaction, {
-            headers: {
-              'x-apikey': 'tu_api_key', // Aquí va tu API Key
-            },
-          });
-  
-          this.successMessage = 'Venta registrada con éxito';
-          this.errorMessage = '';  // Limpiar cualquier mensaje de error previo
-          this.resetForm();  // Opcional: limpiar el formulario después de éxito
-        } catch (error) {
-          this.errorMessage = 'Error al registrar la venta. Intenta de nuevo.';
-          this.successMessage = '';  // Limpiar cualquier mensaje de éxito previo
-        }
-      },
-  
-      // Limpiar el formulario
-      resetForm() {
-        this.cryptoCode = '';
-        this.cryptoAmount = '';
+    cryptoAmount() {
+      this.fetchCryptoPrice();
+    }
+  },
+
+  methods: {
+    async fetchCryptoPrice() {
+      // Si no hay cripto o cantidad válida limpiar el monto
+      if (!this.cryptoCode || !this.cryptoAmount || this.cryptoAmount <= 0) {
         this.money = '';
-        this.datetime = '';
-      },
+        return;
+      }
+
+      try {
+        const response = await axios.get(`https://criptoya.com/api/satoshitango/${this.cryptoCode}/ars`);
+        const precioUnitario = response.data.totalBid;
+        this.money = (this.cryptoAmount * precioUnitario).toFixed(2);
+        this.errorMessage = '';
+      } catch (error) {
+        console.error('Error al obtener el precio:', error);
+        this.errorMessage = 'No se pudo obtener el precio actual. Intenta más tarde.';
+        this.money = '';
+      }
     },
-  };
-  </script>
+
+    validateForm() {
+      if (!this.cryptoCode || !this.cryptoAmount || !this.money || !this.datetime) return false;
+      if (this.cryptoAmount <= 0 || this.money <= 0) return false;
+
+      const currentDate = new Date();
+      const inputDate = new Date(this.datetime);
+      if (inputDate > currentDate) return false;
+
+      return true;
+    },
+
+    async submitForm() {
+      if (!this.validateForm()) {
+        this.errorMessage = 'Por favor, revisa los datos ingresados.';
+        return;
+      }
+
+      const transaction = {
+        user_id: this.userId,
+        action: 'sale',
+        crypto_code: this.cryptoCode,
+        crypto_amount: this.cryptoAmount,
+        money: this.money,
+        datetime: this.datetime,
+      };
+
+      try {
+        await axios.post('https://laboratorio3-f36a.restdb.io/rest/transactions', transaction, {
+          headers: {
+            'x-apikey': '64bdbb6f86d8c5e18ded91e3',
+          },
+        });
+
+        this.successMessage = 'Venta registrada con éxito';
+        this.errorMessage = '';
+        this.resetForm();
+      } catch (error) {
+        console.error(error);
+        this.errorMessage = 'Error al registrar la venta. Intenta de nuevo.';
+        this.successMessage = '';
+      }
+    },
+
+    resetForm() {
+      this.cryptoCode = '';
+      this.cryptoAmount = '';
+      this.money = '';
+      this.datetime = '';
+    },
+  }
+ };
+</script>
+
   
-  <style scoped>
+<style scoped>
   /* Estilos para el formulario */
   .purchase-form {
     max-width: 400px;
@@ -234,4 +253,4 @@
   background-blend-mode: overlay;
   color: rgb(0, 0, 0);
 }
-  </style>
+</style>

@@ -1,6 +1,5 @@
 <template>
   <div class="login-container">
-    <img class="fondo" src="/img/icons/fondo4.png" alt="Fondo" />
     <div class="login-box">
       <h2><u>Iniciar Sesión</u></h2>
       <input v-model="userId" type="text" placeholder="Ingrese su ID" />
@@ -35,22 +34,15 @@ export default {
 
 <style scoped>
 .login-container {
+  min-height: 100vh; /* Mínimo alto de la pantalla */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  position: relative;
-  color: white;
-}
-
-.fondo {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  background: 
+    linear-gradient(135deg,#000000, #68e8f1, #000000),
+    url('https://www.transparenttextures.com/patterns/light-wool.png');
+  background-blend-mode: overlay;
+  color: rgb(0, 0, 0);
 }
 
 .login-box {
