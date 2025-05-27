@@ -1,7 +1,7 @@
 <template>
   <div class="background">
     <div class="purchase-form">
-     <h2><u>Compra De Criptomoneda</u></h2>
+      <h2><u>Compra De Criptomoneda</u></h2>
      <form @submit.prevent="submitForm">
       <!-- Criptomoneda -->
       <div>
@@ -49,9 +49,8 @@
         <button @click="$router.push('/about')">Volver</button>
       </div>
      </form>
-
-     <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
-     <p v-if="successMessage" style="color: green;">{{ successMessage }}</p>
+       <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+       <p v-if="successMessage" style="color: green;">{{ successMessage }}</p>
    </div>
   </div>
 </template>
@@ -136,9 +135,9 @@ export default {
       };
 
       try {
-        await axios.post('https://laboratorio3-f36a.restdb.io/rest/transactions', transaction, {
+        await axios.post('https://laboratorio-afe2.restdb.io/rest/transactions', transaction, {
           headers: {
-            'x-apikey': '64bdbb6f86d8c5e18ded91e3',
+            'x-apikey': '650b53356888544ec60c00bf',
           },
         });
 

@@ -34,6 +34,7 @@
 
 <script>
 import axios from 'axios';
+import { mapState } from "vuex";
 
 export default {
   data() {
@@ -41,16 +42,18 @@ export default {
       transactions: [], // Transacciones del usuario
       cryptos: [], // Información de criptomonedas con su saldo y valor
       totalAmount: 0, // Total de dinero en ARS
-      userId: 'valor_introducido_login', // Este valor debe provenir del login
     };
+  },
+  computed: {
+    ...mapState(["userId"]), // 🔥 Esto conecta el estado global de Vuex
   },
   methods: {
     // Método para obtener todas las transacciones del usuario
     async getTransactionHistory() {
       try {
-        const response = await axios.get(`https://laboratorio3-f36a.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
+        const response = await axios.get(`https://laboratorio-afe2.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
           headers: {
-            'x-apikey': '64bdbb6f86d8c5e18ded91e3', // Reemplazar con tu API Key
+            'x-apikey': '650b53356888544ec60c00bf', // Reemplazar con tu API Key
           },
         });
         this.transactions = response.data;

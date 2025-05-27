@@ -67,25 +67,28 @@
 
 <script>
 import axios from 'axios';
+import { mapState } from "vuex";
 
 export default {
   data() {
     return {
       transactions: [],          // Lista de transacciones del usuario
-      userId: 'valor_introducido_login', // Este valor debe ser el que proviene del login
       showDetails: false,        // Flag para mostrar detalles
       showEdit: false,           // Flag para mostrar el modal de edición
       selectedTransaction: null, // Transacción seleccionada
       editMoney: '',             // Nuevo monto para editar
     };
   },
+   computed: {
+    ...mapState(["userId"]), // 🔥 Esto conecta el estado global de Vuex
+  },
   methods: {
     // Obtener el historial de transacciones
     async getTransactionHistory() {
       try {
-        const response = await axios.get(`https://laboratorio3-f36a.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
+        const response = await axios.get(`https://laboratorio-afe2.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
           headers: {
-            'x-apikey': '64bdbb6f86d8c5e18ded91e3', // Aquí va tu API Key
+            'x-apikey': '650b53356888544ec60c00bf', // Aquí va tu API Key
           },
         });
         this.transactions = response.data;
@@ -135,9 +138,9 @@ export default {
       };
 
       try {
-        await axios.patch(`https://laboratorio3-f36a.restdb.io/rest/transactions/${this.selectedTransaction._id}`, updatedData, {
+        await axios.patch(`https://laboratorio-afe2.restdb.io/rest/transactions/${this.selectedTransaction._id}`, updatedData, {
           headers: {
-            'x-apikey': 'tu_api_key', // Aquí va tu API Key
+            'x-apikey': '650b53356888544ec60c00bf', // Aquí va tu API Key
           },
         });
 
@@ -153,9 +156,9 @@ export default {
     async deleteTransaction(transaction) {
       if (confirm('¿Estás seguro de que quieres eliminar esta transacción?')) {
         try {
-          await axios.delete(`https://laboratorio3-f36a.restdb.io/rest/transactions/${transaction._id}`, {
+          await axios.delete(`https://laboratorio-afe2.restdb.io/rest/transactions/${transaction._id}`, {
             headers: {
-              'x-apikey': 'tu_api_key',
+              'x-apikey': '650b53356888544ec60c00bf',
             },
           });
 

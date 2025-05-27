@@ -34,7 +34,7 @@
         <!-- Monto cobrado -->
         <div class="amount-container">
           <label for="money"><u>Monto a Cobrar</u></label>
-          <input type="number" v-model="money" min="0" required placeholder="Ej: 170.98" />
+          <input type="number" v-model="money" min="0" required readonly />
         </div>
   
         <!-- Fecha y hora -->
@@ -58,6 +58,7 @@
 
 <script>
  import axios from 'axios';
+ import { mapState } from "vuex";
 
  export default {
   data() {
@@ -66,10 +67,12 @@
       cryptoAmount: '',
       money: '',
       datetime: '',
-      userId: 'valor_introducido_login',
       errorMessage: '',
       successMessage: '',
     };
+  },
+  computed: {
+    ...mapState(["userId"]), // 🔥 Esto conecta el estado global de Vuex
   },
 
   watch: {
@@ -92,7 +95,7 @@
       try {
         const response = await axios.get(`https://criptoya.com/api/satoshitango/${this.cryptoCode}/ars`);
         const precioUnitario = response.data.totalBid;
-        this.money = (this.cryptoAmount * precioUnitario).toFixed(2);
+        this.money = parseFloat((this.cryptoAmount * precioUnitario).toFixed(2));
         this.errorMessage = '';
       } catch (error) {
         console.error('Error al obtener el precio:', error);
@@ -128,9 +131,9 @@
       };
 
       try {
-        await axios.post('https://laboratorio3-f36a.restdb.io/rest/transactions', transaction, {
+        await axios.post('https://laboratorio-afe2.restdb.io/rest/transactions', transaction, {
           headers: {
-            'x-apikey': '64bdbb6f86d8c5e18ded91e3',
+            'x-apikey': '650b53356888544ec60c00bf',
           },
         });
 

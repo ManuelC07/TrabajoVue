@@ -29,22 +29,25 @@
 
 <script>
 import axios from 'axios';
+import { mapState } from "vuex";
 
 export default {
   data() {
     return {
       transactions: [], // Transacciones del usuario
       investmentResults: [], // Resultados de las inversiones (ganancia o pérdida)
-      userId: 'valor_introducido_login', // Este valor debe provenir del login
     };
+  },
+  computed: {
+    ...mapState(["userId"]), // 🔥 Esto conecta el estado global de Vuex
   },
   methods: {
     // Método para obtener todas las transacciones del usuario
     async getTransactionHistory() {
       try {
-        const response = await axios.get(`https://laboratorio3-f36a.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
+        const response = await axios.get(`https://laboratorio-afe2.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
           headers: {
-            'x-apikey': '64bdbb6f86d8c5e18ded91e3', // Reemplazar con tu API Key
+            'x-apikey': '650b53356888544ec60c00bf', // Reemplazar con tu API Key
           },
         });
         this.transactions = response.data;
@@ -57,7 +60,6 @@ export default {
     // Método para calcular las ganancias o pérdidas por criptomoneda
     calculateInvestments() {
       const investments = {}; // Almacenará las ganancias y pérdidas por criptomoneda
-      const cryptoPrices = {}; // Para almacenar los precios actuales de las criptos
 
       // Agrupar las transacciones por criptomoneda
       this.transactions.forEach(transaction => {
