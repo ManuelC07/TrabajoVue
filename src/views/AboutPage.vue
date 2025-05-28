@@ -37,7 +37,7 @@ export default {
   align-items: center;
   padding: 50px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #000000, #1fa099f3, #000000),
+  background: linear-gradient(135deg, #000000, #68e8f1, #000000),
               url('https://www.transparenttextures.com/patterns/light-wool.png');
   background-blend-mode: overlay;
   color: white;

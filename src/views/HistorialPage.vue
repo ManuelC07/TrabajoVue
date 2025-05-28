@@ -1,5 +1,6 @@
 <template>
-  <div class="history">
+  <div class="background">
+   <div class="history">
     <h2>Historial de Movimientos</h2>
     
     <!-- Mostrar historial si hay movimientos -->
@@ -25,7 +26,7 @@
             <td>
               <button @click="viewTransaction(transaction)">Ver</button>
               <button @click="editTransaction(transaction)">Editar</button>
-              <button @click="deleteTransaction(transaction)">Eliminar</button>
+              <button @click="confirmDelete(transaction)">Eliminar</button>
             </td>
           </tr>
         </tbody>
@@ -50,18 +51,41 @@
 
     <!-- Modal de edición de transacción -->
     <div v-if="showEdit" class="modal">
-      <div class="modal-content">
+      <div class="modal-content edit-mode">
         <h3>Editar Transacción</h3>
         <form @submit.prevent="updateTransaction">
           <div>
-            <label for="edit-money">Monto (en Pesos)</label>
-            <input type="number" v-model="editMoney" required />
+            <label for="edit-crypto-code">Criptomoneda</label>
+            <input id="edit-crypto-code" type="text" v-model="editCryptoCode" required />
           </div>
-          <button type="submit">Actualizar</button>
+          <div>
+            <label for="edit-crypto-amount">Cantidad</label>
+            <input id="edit-crypto-amount" type="number" step="any" v-model="editCryptoAmount" required />
+          </div>
+          <div>
+            <label for="edit-datetime">Fecha y Hora</label>
+            <input id="edit-datetime" type="datetime-local" v-model="editDatetime" required />
+          </div>
+          <button class="update-btn" type="submit">Actualizar</button>
           <button @click="closeEdit">Cancelar</button>
         </form>
       </div>
     </div>
+    <!-- Modal de confirmación para eliminar -->
+    <div v-if="showDeleteConfirm" class="modal">
+     <div class="modal-content edit-mode">
+       <h3>Confirmar Eliminación</h3>
+       <p>¿Estás seguro que deseas eliminar esta transacción?</p>
+        <div>
+          <button class="update-btn" @click="deleteTransactionConfirmed">Aceptar</button>
+          <button @click="cancelDelete">Cancelar</button>
+       </div>
+      </div>
+    </div>
+    <div class="botones-container">
+      <button @click="$router.push('/about')">Volver</button>
+    </div>
+   </div>
   </div>
 </template>
 
@@ -76,7 +100,11 @@ export default {
       showDetails: false,        // Flag para mostrar detalles
       showEdit: false,           // Flag para mostrar el modal de edición
       selectedTransaction: null, // Transacción seleccionada
-      editMoney: '',             // Nuevo monto para editar
+      editCryptoCode: '',
+      editCryptoAmount: '',
+      editDatetime: '', 
+      showDeleteConfirm: false,      // Para mostrar el modal de confirmación
+      transactionToDelete: null,     // Guarda la transacción que quieres eliminar            
     };
   },
    computed: {
@@ -122,7 +150,10 @@ export default {
     // Mostrar el modal de edición con los valores actuales
     editTransaction(transaction) {
       this.selectedTransaction = transaction;
-      this.editMoney = transaction.money;
+      this.editCryptoCode = transaction.crypto_code;
+      this.editCryptoAmount = transaction.crypto_amount;
+      // Convertimos la fecha a formato ISO para el input datetime-local
+      this.editDatetime = new Date(transaction.datetime).toISOString().slice(0,16);
       this.showEdit = true;
     },
 
@@ -134,7 +165,9 @@ export default {
     // Actualizar la transacción
     async updateTransaction() {
       const updatedData = {
-        money: this.editMoney,
+       crypto_code: this.editCryptoCode,
+       crypto_amount: this.editCryptoAmount,
+       datetime: new Date(this.editDatetime).toISOString(),
       };
 
       try {
@@ -145,30 +178,38 @@ export default {
         });
 
         // Actualizar la transacción en el array local
-        this.selectedTransaction.money = this.editMoney;
+        Object.assign(this.selectedTransaction, updatedData);
         this.showEdit = false;
       } catch (error) {
         console.error('Error al actualizar la transacción', error);
       }
     },
 
-    // Eliminar una transacción
-    async deleteTransaction(transaction) {
-      if (confirm('¿Estás seguro de que quieres eliminar esta transacción?')) {
-        try {
-          await axios.delete(`https://laboratorio-afe2.restdb.io/rest/transactions/${transaction._id}`, {
-            headers: {
-              'x-apikey': '650b53356888544ec60c00bf',
-            },
-          });
+    confirmDelete(transaction) {
+      this.transactionToDelete = transaction;
+      this.showDeleteConfirm = true;
+    },
 
-          // Eliminar la transacción de la lista local
-          this.transactions = this.transactions.filter((t) => t._id !== transaction._id);
-        } catch (error) {
-          console.error('Error al eliminar la transacción', error);
-        }
+    // Eliminar una transacción
+    async deleteTransactionConfirmed() {
+      try {
+        await axios.delete(`https://laboratorio-afe2.restdb.io/rest/transactions/${this.transactionToDelete._id}`, {
+          headers: {
+            'x-apikey': '650b53356888544ec60c00bf',
+          },
+        });
+
+        this.transactions = this.transactions.filter((t) => t._id !== this.transactionToDelete._id);
+        this.transactionToDelete = null;
+        this.showDeleteConfirm = false;
+      } catch (error) {
+        console.error('Error al eliminar la transacción', error);
       }
     },
+     cancelDelete() {
+      this.transactionToDelete = null;
+      this.showDeleteConfirm = false;
+    }
   },
   mounted() {
     // Cargar el historial de transacciones cuando el componente se monte
@@ -178,10 +219,28 @@ export default {
 </script>
 
 <style scoped>
+.background {
+  min-height: 100vh; /* Mínimo alto de la pantalla */
+  padding: 4rem;
+  display: flex;
+  justify-content: center;  /* Centra horizontalmente */
+  background: 
+    linear-gradient(135deg, #000000, #474ae2, #000000),
+    url('https://www.transparenttextures.com/patterns/light-wool.png');
+  background-blend-mode: overlay;
+  color: #000; /* Color del texto */
+}
+
 /* Estilos para el historial */
 .history {
   max-width: 900px;
   margin: 0 auto;
+  background: rgba(255, 255, 255, 0.6); /* Fondo blanco con transparencia */
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #000; /* Borde negro sólido */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* sombra suave para mejorar contraste */
+
 }
 
 table {
@@ -192,19 +251,31 @@ table {
 table th, table td {
   padding: 0.8rem;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 1px solid #000; /* Bordes negros */
+  background-color: rgba(255, 255, 255, 0.6); /* celda semitransparente */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* sombra suave para mejorar contraste */
 }
 
 button {
   padding: 0.5rem 1rem;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
+  font-size: 1rem;
+  border-radius: 12px;
+  background-color: #ffff;
+  color: black;
+  border: 2px solid black;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #8b8b8b;
+}
+
+.botones-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 28px; 
 }
 
 /* Modal de detalles */
@@ -229,5 +300,23 @@ button:hover {
 
 .modal-content button {
   background-color: #f44336;
+}
+/* SOLO para el modo editar */
+.edit-mode label {
+  color: #333;
+  font-weight: 600;
+}
+
+.edit-mode input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  color: #222;
+  margin-bottom: 1rem;
+}
+
+.modal-content.edit-mode .update-btn{
+  background-color: #4caf50;
 }
 </style>
