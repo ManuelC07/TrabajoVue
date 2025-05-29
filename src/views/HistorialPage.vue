@@ -54,9 +54,13 @@
       <div class="modal-content edit-mode">
         <h3>Editar Transacción</h3>
         <form @submit.prevent="updateTransaction">
-          <div>
+          <div class="select-container">
             <label for="edit-crypto-code">Criptomoneda</label>
-            <input id="edit-crypto-code" type="text" v-model="editCryptoCode" required />
+            <select class="select-edit" id="edit-crypto-code" type="text" v-model="editCryptoCode" required >
+              <option  value="btc">BTC</option>
+              <option  value="eth">ETH</option>
+              <option  value="usdc">USDC</option>
+            </select>
           </div>
           <div>
             <label for="edit-crypto-amount">Cantidad</label>
@@ -114,9 +118,9 @@ export default {
     // Obtener el historial de transacciones
     async getTransactionHistory() {
       try {
-        const response = await axios.get(`https://laboratorio-afe2.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
+        const response = await axios.get(`https://laboratorio3-5fc7.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
           headers: {
-            'x-apikey': '650b53356888544ec60c00bf', // Aquí va tu API Key
+            'x-apikey': '64bdbc3386d8c5613ded91e7', // Aquí va tu API Key
           },
         });
         this.transactions = response.data;
@@ -164,27 +168,37 @@ export default {
 
     // Actualizar la transacción
     async updateTransaction() {
-      const updatedData = {
-       crypto_code: this.editCryptoCode,
-       crypto_amount: this.editCryptoAmount,
-       datetime: new Date(this.editDatetime).toISOString(),
-      };
-
+     // Paso 1: Consultar el precio actual de la criptomoneda
       try {
-        await axios.patch(`https://laboratorio-afe2.restdb.io/rest/transactions/${this.selectedTransaction._id}`, updatedData, {
-          headers: {
-            'x-apikey': '650b53356888544ec60c00bf', // Aquí va tu API Key
-          },
-        });
+        const response = await axios.get(`https://criptoya.com/api/satoshitango/${this.editCryptoCode}/ars`)
+        const currentPrice = parseFloat(response.data.price);
 
-        // Actualizar la transacción en el array local
-        Object.assign(this.selectedTransaction, updatedData);
-        this.showEdit = false;
-      } catch (error) {
-        console.error('Error al actualizar la transacción', error);
-      }
-    },
+        // Paso 2: Calcular el nuevo monto basado en el precio y la cantidad editada
+        const newAmount = parseFloat(parseFloat(this.editCryptoAmount));
+        const newMoney = parseFloat(currentPrice * newAmount);
 
+        // Paso 3: Preparar los datos actualizados para la transacción
+        const updatedData = {
+        crypto_code: this.editCryptoCode,
+        crypto_amount: newAmount,
+        money: newMoney,
+        datetime: new Date(this.editDatetime).toISOString(),
+       };
+
+        // Paso 4: Actualizar la transacción en la base de datos
+        await axios.patch(`https://laboratorio3-5fc7.restdb.io/rest/transactions/${this.selectedTransaction._id}`, updatedData, {
+         headers: {
+         'x-apikey': '64bdbc3386d8c5613ded91e7', // Aquí va tu API Key
+        },
+      });
+
+      // Paso 5: Actualizar la transacción en el array local
+      Object.assign(this.selectedTransaction, updatedData);
+      this.showEdit = false;
+    } catch (error) {
+      console.error('Error al actualizar la transacción', error);
+    }
+  },
     confirmDelete(transaction) {
       this.transactionToDelete = transaction;
       this.showDeleteConfirm = true;
@@ -193,9 +207,9 @@ export default {
     // Eliminar una transacción
     async deleteTransactionConfirmed() {
       try {
-        await axios.delete(`https://laboratorio-afe2.restdb.io/rest/transactions/${this.transactionToDelete._id}`, {
+        await axios.delete(`https://laboratorio3-5fc7.restdb.io/rest/transactions/${this.transactionToDelete._id}`, {
           headers: {
-            'x-apikey': '650b53356888544ec60c00bf',
+            'x-apikey': '64bdbc3386d8c5613ded91e7',
           },
         });
 
@@ -318,5 +332,28 @@ button:hover {
 
 .modal-content.edit-mode .update-btn{
   background-color: #4caf50;
+}
+
+.select-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.select-container label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.select-edit{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  color: #222;
+  width: 100%;
 }
 </style>

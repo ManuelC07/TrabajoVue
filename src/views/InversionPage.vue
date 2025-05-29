@@ -45,9 +45,9 @@ export default {
     // Método para obtener todas las transacciones del usuario
     async getTransactionHistory() {
       try {
-        const response = await axios.get(`https://laboratorio-afe2.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
+        const response = await axios.get(`https://laboratorio3-5fc7.restdb.io/rest/transactions?q={"user_id":"${this.userId}"}`, {
           headers: {
-            'x-apikey': '650b53356888544ec60c00bf', // Reemplazar con tu API Key
+            'x-apikey': '64bdbc3386d8c5613ded91e7', // Reemplazar con tu API Key
           },
         });
         this.transactions = response.data;
