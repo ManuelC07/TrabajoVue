@@ -15,7 +15,7 @@
         <tbody>
           <tr v-for="crypto in cryptos" :key="crypto.crypto_code">
             <td>{{ crypto.crypto_code }}</td>
-            <td>{{ crypto.amount.toFixed(4) }}</td>
+            <td>{{ formatAmount(crypto.amount) }}</td>
             <td>${{ crypto.valueInPesos.toFixed(2) }}</td>
           </tr>
           <tr>
@@ -29,6 +29,9 @@
     <div v-else>
       <p>No tienes criptomonedas registradas o tienes saldo cero.</p>
     </div>
+     <div>
+      <button @click="$router.push('/about')">Volver</button>
+     </div>
   </div>
 </template>
 
@@ -48,6 +51,9 @@ export default {
     ...mapState(["userId"]), // 🔥 Esto conecta el estado global de Vuex
   },
   methods: {
+    formatAmount(amount) {
+      return parseFloat(amount.toFixed(8)).toString();
+    },
     // Método para obtener todas las transacciones del usuario
     async getTransactionHistory() {
       try {
@@ -95,7 +101,7 @@ export default {
     async fetchCryptoPrice(cryptoCode, cryptoAmount) {
       try {
         // Realizar la solicitud para obtener el precio de la criptomoneda en ARS
-        const response = await axios.get(`https://criptoya.com/api/satoshitango/${cryptoCode}/ars/`);
+        const response = await axios.get(`https://criptoya.com/api/satoshitango/${cryptoCode}/ars`);
         const price = response.data.ask; // Obtener el precio de venta (ask)
 
         // Calcular el valor en pesos
@@ -104,7 +110,7 @@ export default {
         // Almacenar la información de la criptomoneda
         this.cryptos.push({
           crypto_code: cryptoCode,
-          amount: cryptoAmount,
+          amount:parseFloat(cryptoAmount.toFixed(8)),
           valueInPesos,
         });
 

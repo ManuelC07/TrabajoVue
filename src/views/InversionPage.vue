@@ -24,6 +24,9 @@
     <div v-else>
       <p>No tienes transacciones o las ganancias/pérdidas no están registradas.</p>
     </div>
+     <div>
+      <button @click="$router.push('/about')">Volver</button>
+     </div>
   </div>
 </template>
 
@@ -97,7 +100,7 @@ export default {
     // Método para obtener el precio actual de la criptomoneda desde la API de Criptoya
     async fetchCryptoPrice(cryptoCode, investmentData) {
       try {
-        const response = await axios.get(`https://criptoya.com/api/satoshitango/${cryptoCode}/ars/`);
+        const response = await axios.get(`https://criptoya.com/api/satoshitango/${cryptoCode}/ars`);
         const currentPrice = response.data.ask; // Obtener el precio de venta (ask)
 
         // Calcular el valor actual de las criptomonedas compradas

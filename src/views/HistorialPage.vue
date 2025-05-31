@@ -54,21 +54,16 @@
       <div class="modal-content edit-mode">
         <h3>Editar Transacción</h3>
         <form @submit.prevent="updateTransaction">
-          <div class="select-container">
-            <label for="edit-crypto-code">Criptomoneda</label>
-            <select class="select-edit" id="edit-crypto-code" type="text" v-model="editCryptoCode" required >
-              <option  value="btc">BTC</option>
-              <option  value="eth">ETH</option>
-              <option  value="usdc">USDC</option>
-            </select>
-          </div>
           <div>
             <label for="edit-crypto-amount">Cantidad</label>
             <input id="edit-crypto-amount" type="number" step="any" v-model="editCryptoAmount" required />
           </div>
-          <div>
-            <label for="edit-datetime">Fecha y Hora</label>
-            <input id="edit-datetime" type="datetime-local" v-model="editDatetime" required />
+          <div class="form-group">
+            <label for="edit-action">Acción</label>
+            <select id="edit-action" v-model="editAction" required>
+              <option value="purchase">compra</option>
+              <option value="sale">venta</option>
+            </select>
           </div>
           <button class="update-btn" type="submit">Actualizar</button>
           <button @click="closeEdit">Cancelar</button>
@@ -104,9 +99,9 @@ export default {
       showDetails: false,        // Flag para mostrar detalles
       showEdit: false,           // Flag para mostrar el modal de edición
       selectedTransaction: null, // Transacción seleccionada
-      editCryptoCode: '',
       editCryptoAmount: '',
-      editDatetime: '', 
+      editAction:'',
+      editCryptoCode: '',
       showDeleteConfirm: false,      // Para mostrar el modal de confirmación
       transactionToDelete: null,     // Guarda la transacción que quieres eliminar            
     };
@@ -154,51 +149,71 @@ export default {
     // Mostrar el modal de edición con los valores actuales
     editTransaction(transaction) {
       this.selectedTransaction = transaction;
-      this.editCryptoCode = transaction.crypto_code;
       this.editCryptoAmount = transaction.crypto_amount;
-      // Convertimos la fecha a formato ISO para el input datetime-local
-      this.editDatetime = new Date(transaction.datetime).toISOString().slice(0,16);
+      this.editAction = transaction.action;
+      this.editCryptoCode = transaction.crypto_code
       this.showEdit = true;
     },
 
     // Cerrar el modal de edición
     closeEdit() {
       this.showEdit = false;
+      this.editCryptoAmount = '';
+      this.editAction = '';
+      this.editCryptoCode ='';
     },
 
     // Actualizar la transacción
     async updateTransaction() {
-     // Paso 1: Consultar el precio actual de la criptomoneda
-      try {
-        const response = await axios.get(`https://criptoya.com/api/satoshitango/${this.editCryptoCode}/ars`)
-        const currentPrice = parseFloat(response.data.price);
+    try {
+     // Determinar si es compra o venta
+    const action = this.editAction;
 
-        // Paso 2: Calcular el nuevo monto basado en el precio y la cantidad editada
-        const newAmount = parseFloat(parseFloat(this.editCryptoAmount));
-        const newMoney = parseFloat(currentPrice * newAmount);
+    // Obtener el endpoint correcto según la acción
+    const url = action === 'purchase'
+      ? `https://criptoya.com/api/satoshitango/${this.editCryptoCode}/ars`
+      : `https://criptoya.com/api/satoshitango/${this.editCryptoCode}/ars`;
 
-        // Paso 3: Preparar los datos actualizados para la transacción
-        const updatedData = {
-        crypto_code: this.editCryptoCode,
-        crypto_amount: newAmount,
-        money: newMoney,
-        datetime: new Date(this.editDatetime).toISOString(),
-       };
+    const response = await axios.get(url);
+    const priceData = response.data;
 
-        // Paso 4: Actualizar la transacción en la base de datos
-        await axios.patch(`https://laboratorio3-5fc7.restdb.io/rest/transactions/${this.selectedTransaction._id}`, updatedData, {
-         headers: {
-         'x-apikey': '64bdbc3386d8c5613ded91e7', // Aquí va tu API Key
-        },
-      });
+    // Usar el precio de compra o de venta según corresponda
+    const price = action === 'purchase'
+      ? parseFloat(priceData.ask)
+      : parseFloat(priceData.bid);
 
-      // Paso 5: Actualizar la transacción en el array local
-      Object.assign(this.selectedTransaction, updatedData);
-      this.showEdit = false;
-    } catch (error) {
-      console.error('Error al actualizar la transacción', error);
-    }
-  },
+    const newAmount = parseFloat(this.editCryptoAmount);
+    const newMoney = parseFloat((price * newAmount).toFixed(2));
+
+    // Paso 5: Preparar los datos a actualizar
+    const updatedData = {
+      crypto_amount: newAmount,
+      money: newMoney,
+      crypto_code: this.editCryptoCode,
+      action: action
+    };
+
+    // Paso 6: Hacer PATCH a la API para actualizar la transacción
+    await axios.patch(
+      `https://laboratorio3-5fc7.restdb.io/rest/transactions/${this.selectedTransaction._id}`,updatedData,{
+        headers: {
+          'x-apikey': '64bdbc3386d8c5613ded91e7'
+        }
+      }
+    );
+
+    // Paso 7: Actualizar el array local con los nuevos datos
+    Object.assign(this.selectedTransaction, updatedData);
+    // Paso 8: Cerrar el formulario de edición
+    this.showEdit = false;
+
+  } catch (error) {
+    console.error('Error al actualizar la transacción:', error);
+     if (error.response && error.response.data && error.response.data.list) {
+    console.table(error.response.data.list);
+  }
+  }
+ },
     confirmDelete(transaction) {
       this.transactionToDelete = transaction;
       this.showDeleteConfirm = true;
@@ -333,27 +348,24 @@ button:hover {
 .modal-content.edit-mode .update-btn{
   background-color: #4caf50;
 }
-
-.select-container{
+.form-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
   margin-bottom: 1rem;
 }
-.select-container label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+
+.form-group label {
+  color: #333;
+  font-weight: 600;
 }
 
-.select-edit{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.form-group input,
+.form-group select {
+  width: 100%;
   padding: 0.5rem;
   border: 1px solid #aaa;
   border-radius: 4px;
   color: #222;
-  width: 100%;
+  margin-bottom: 1rem;
 }
 </style>
