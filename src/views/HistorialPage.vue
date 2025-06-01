@@ -1,7 +1,7 @@
 <template>
   <div class="background">
    <div class="history">
-    <h2>Historial de Movimientos</h2>
+    <h2><u>Historial de Movimientos</u></h2>
     
     <!-- Mostrar historial si hay movimientos -->
     <div v-if="transactions.length > 0">
@@ -254,8 +254,8 @@ export default {
   display: flex;
   justify-content: center;  /* Centra horizontalmente */
   background: 
-    linear-gradient(135deg, #000000, #474ae2, #000000),
-    url('https://www.transparenttextures.com/patterns/light-wool.png');
+    linear-gradient(135deg, #000000, #30329e, #000000),
+    url("https://www.transparenttextures.com/patterns/brushed-alum-dark.png");
   background-blend-mode: overlay;
   color: #000; /* Color del texto */
 }
@@ -269,7 +269,6 @@ export default {
   border-radius: 10px;
   border: 2px solid #000; /* Borde negro sólido */
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* sombra suave para mejorar contraste */
-
 }
 
 table {
@@ -298,6 +297,7 @@ button {
 
 button:hover {
   background-color: #8b8b8b;
+  box-shadow: 0 0 12px 4px rgba(245, 234, 83, 0.6); /* efecto de brillo suave */
 }
 
 .botones-container {

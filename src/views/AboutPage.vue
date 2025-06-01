@@ -37,8 +37,8 @@ export default {
   align-items: center;
   padding: 50px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #000000, #68e8f1, #000000),
-              url('https://www.transparenttextures.com/patterns/light-wool.png');
+  background: linear-gradient(135deg, #000000, #3f3f3fd8, #000000),
+              url('http://www.transparenttextures.com/patterns/knitted-sweater.png');
   background-blend-mode: overlay;
   color: white;
 }
@@ -64,8 +64,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  margin-top: 50px;
+  gap: 60px;
+  margin-top: 140px;
 }
 
 button {
@@ -82,6 +82,7 @@ button {
 
 button:hover {
   background-color: #8b8b8b;
+  box-shadow: 0 0 12px 4px rgba(245, 234, 83, 0.6); /* efecto de brillo suave*/
 }
 
 /* Botón de salir específico */
@@ -90,9 +91,9 @@ button:hover {
   font-size: 18px;
   height: auto;
   width: auto;
-  background-color: white;
-  color: black;
-  border: 2px solid black;
+  background-color: transparent;
+  color: rgb(255, 255, 255);
+  border: 2px solid rgb(255, 255, 255);
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s;

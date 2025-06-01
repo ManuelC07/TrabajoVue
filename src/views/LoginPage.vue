@@ -39,8 +39,8 @@ export default {
   justify-content: center; /* Centrado horizontal */
   align-items: center; /* Centrado vertical */
   background: 
-    linear-gradient(135deg,#000000, #68e8f1, #000000),
-    url('https://www.transparenttextures.com/patterns/light-wool.png');
+    linear-gradient(135deg,#000000, #4aaab1e5, #000000),
+    url("https://www.transparenttextures.com/patterns/xv.png");
   background-blend-mode: overlay;
   color: rgb(0, 0, 0);
 }

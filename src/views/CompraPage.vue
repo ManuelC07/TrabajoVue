@@ -164,8 +164,13 @@ export default {
 <style scoped>
 /* Estilos para el formulario */
 .purchase-form {
-  max-width: 400px;
+   max-width: 900px;
   margin: 0 auto;
+  background: rgba(255, 255, 255, 0.6); /* Fondo blanco con transparencia */
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #000; /* Borde negro sólido */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* sombra suave para mejorar contraste */
 }
 
 form div {
@@ -199,6 +204,7 @@ button {
 }
 button:hover {
   background-color: #8b8b8b;
+  box-shadow: 0 0 12px 4px rgba(245, 234, 83, 0.6); /* efecto de brillo suave */
 }
 
 p {
@@ -254,8 +260,8 @@ p {
   justify-content: center; /* Centrado horizontal */
   align-items: center; /* Centrado vertical */
   background: 
-    linear-gradient(135deg,#000000, #58c095, #000000),
-    url('https://www.transparenttextures.com/patterns/light-wool.png');
+    linear-gradient(135deg,#000000, #49a17d, #000000),
+    url("https://www.transparenttextures.com/patterns/wild-flowers.png");
   background-blend-mode: overlay;
   color: rgb(0, 0, 0);
 }

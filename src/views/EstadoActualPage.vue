@@ -1,6 +1,7 @@
 <template>
+  <div class="background">
   <div class="finances">
-    <h2>Análisis del Estado Actual de Mis Finanzas</h2>
+    <h2><u>Análisis del Estado Actual de Mis Finanzas</u></h2>
     
     <!-- Si hay datos, los mostramos en una tabla -->
     <div v-if="cryptos.length > 0">
@@ -32,6 +33,7 @@
      <div>
       <button @click="$router.push('/about')">Volver</button>
      </div>
+  </div>
   </div>
 </template>
 
@@ -129,25 +131,62 @@ export default {
 </script>
 
 <style scoped>
+.background {
+  min-height: 100vh; /* Altura mínima igual al alto de la ventana */
+  padding: 4rem;
+  display: flex;
+  justify-content: center;
+  background: 
+    linear-gradient(135deg, #000000, #a045a8, #000000),
+    url("https://www.transparenttextures.com/patterns/diamond-upholstery.png");
+  background-blend-mode: overlay;
+  color: #000;
+}
+
 /* Estilos para la página de análisis de finanzas */
 .finances {
   max-width: 900px;
   margin: 0 auto;
+  background: rgba(255, 255, 255, 0.6); /* Fondo blanco con transparencia */
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #000; /* Borde negro sólido */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Sombra suave para mejorar el contraste */
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px; /* Ajuste opcional para separar la tabla del borde superior */
+  table-layout: fixed;
 }
 
 table th, table td {
+  width: 33.33%;
+  min-width: 120px;
+  word-wrap: break-word;
   padding: 0.8rem;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 1px solid #ddd; /* Bordes grises */
+  background-color: rgba(255, 255, 255, 0.6); /* Celda semitransparente */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Sombra suave para mejorar el contraste */
 }
 
-table th {
-  background-color: #f2f2f2;
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  background-color: #ffff; /* Fondo blanco */
+  color: black;
+  border: 2px solid black;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px; /* Ajuste opcional para separar el botón de la tabla */
+}
+
+button:hover {
+  background-color: #8b8b8b; /* Cambio de color al pasar el mouse */
+  box-shadow: 0 0 12px 4px rgba(245, 234, 83, 0.6); /* efecto de brillo suave */
 }
 
 strong {
